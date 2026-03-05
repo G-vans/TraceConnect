@@ -1,0 +1,97 @@
+<% content_for(:title) { "Radar Dashboard — TraceConnect" } %>
+
+<!-- Page Header -->
+<div class="mb-6">
+  <h1 class="text-2xl font-bold text-gray-900">Radar Dashboard</h1>
+  <p class="mt-1 text-sm text-gray-500">HQ command center — see all branches at a glance</p>
+</div>
+
+<!-- Pattern Alerts -->
+<% if @pattern_alerts.any? %>
+  <div class="mb-6 rounded-lg bg-red-50 border border-red-200 p-4">
+    <div class="flex items-center mb-2">
+      <span class="text-xl mr-2">🚨</span>
+      <h2 class="text-lg font-semibold text-red-800">Pattern Alerts</h2>
+    </div>
+    <p class="text-sm text-red-700 mb-3">Same issue detected across multiple branches this week</p>
+    <% @pattern_alerts.each do |alert| %>
+      <div class="flex items-center justify-between bg-white rounded-md p-3 mb-2 border border-red-100">
+        <div>
+          <span class="font-medium text-gray-900"><%= alert[:category]&.titleize %></span>
+          <span class="text-sm text-gray-500 ml-2">
+            (<%= alert[:total] %> complaints across <%= alert[:branches].keys.join(", ") %>)
+          </span>
+        </div>
+        <div class="flex gap-2">
+          <% alert[:branches].each do |branch, count| %>
+            <span class="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-700">
+              <%= branch %>: <%= count %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<!-- Branch Cards -->
+<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-8">
+  <% @branches.each do |branch| %>
+    <div class="overflow-hidden rounded-lg bg-white shadow">
+      <div class="px-4 py-5 sm:p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900"><%= branch[:name] %></h3>
+            <p class="text-sm text-gray-500"><%= branch[:country] %> · <%= branch[:law] %></p>
+          </div>
+          <%= consent_badge(branch[:consent_status]) %>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="rounded-lg bg-yellow-50 p-3 text-center">
+            <p class="text-2xl font-bold text-yellow-700"><%= branch[:open_issues] %></p>
+            <p class="text-xs text-yellow-600">Open</p>
+          </div>
+          <div class="rounded-lg bg-blue-50 p-3 text-center">
+            <p class="text-2xl font-bold text-blue-700"><%= branch[:in_progress] %></p>
+            <p class="text-xs text-blue-600">In Progress</p>
+          </div>
+          <div class="rounded-lg bg-green-50 p-3 text-center">
+            <p class="text-2xl font-bold text-green-700"><%= branch[:resolved_total] %></p>
+            <p class="text-xs text-green-600">Resolved</p>
+          </div>
+          <div class="rounded-lg bg-gray-50 p-3 text-center">
+            <p class="text-2xl font-bold text-gray-700"><%= format_hours(branch[:avg_resolution_hours]) %></p>
+            <p class="text-xs text-gray-600">Avg Resolution</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<!-- Quick Stats -->
+<div class="rounded-lg bg-white shadow">
+  <div class="px-4 py-5 sm:p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">This Week at a Glance</h2>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div class="text-center">
+        <p class="text-3xl font-bold text-slate-900"><%= @quick_stats[:total_conversations] %></p>
+        <p class="text-sm text-gray-500">Total Conversations</p>
+      </div>
+      <div class="text-center">
+        <p class="text-3xl font-bold text-green-600"><%= @quick_stats[:resolution_rate] %>%</p>
+        <p class="text-sm text-gray-500">Resolution Rate</p>
+      </div>
+      <div class="text-center">
+        <% if @quick_stats[:top_performer] %>
+          <p class="text-3xl font-bold text-cyan-600"><%= @quick_stats[:top_performer][:name] %></p>
+          <p class="text-sm text-gray-500">Top Performer (<%= @quick_stats[:top_performer][:resolved_count] %> resolved)</p>
+        <% else %>
+          <p class="text-3xl font-bold text-gray-400">—</p>
+          <p class="text-sm text-gray-500">Top Performer</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

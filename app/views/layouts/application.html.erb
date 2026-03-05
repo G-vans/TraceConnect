@@ -1,29 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html class="h-full bg-gray-50">
   <head>
-    <title><%= content_for(:title) || "Trace Connect" %></title>
+    <title><%= content_for(:title) || "TraceConnect" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Trace Connect">
-    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="TraceConnect">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
     <%= yield :head %>
-
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="h-full">
+    <div class="min-h-full">
+      <!-- Navigation -->
+      <nav class="bg-slate-900">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="flex h-16 items-center justify-between">
+            <div class="flex items-center">
+              <div class="shrink-0">
+                <span class="text-2xl font-bold text-white tracking-tight">
+                  <span class="text-cyan-400">Trace</span>Connect
+                </span>
+              </div>
+              <div class="ml-10 flex items-baseline space-x-4">
+                <%= nav_link "Radar", root_path %>
+                <%= nav_link "Conversations", conversations_path %>
+                <%= nav_link "Consent", consent_index_path %>
+                <%= nav_link "Performance", performance_index_path %>
+              </div>
+            </div>
+            <div class="text-sm text-slate-400">
+              Conversation Radar for Distributed Teams
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Page Content -->
+      <main>
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <%= yield %>
+        </div>
+      </main>
+    </div>
   </body>
 </html>

@@ -1,0 +1,148 @@
+<% content_for(:title) { "#{@vcon.subject} — TraceConnect" } %>
+
+<!-- Back Link -->
+<div class="mb-4">
+  <%= link_to "← Back to Conversations", conversations_path, class: "text-sm text-cyan-600 hover:text-cyan-800" %>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <!-- Main Content -->
+  <div class="lg:col-span-2 space-y-6">
+    <!-- Conversation Header -->
+    <div class="rounded-lg bg-white shadow p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h1 class="text-xl font-bold text-gray-900">
+          <%= channel_icon(@vcon.channel) %> <%= @vcon.subject || "Untitled Conversation" %>
+        </h1>
+        <%= status_badge(@vcon.status) %>
+      </div>
+      <div class="flex gap-4 text-sm text-gray-500">
+        <span>Branch: <strong><%= @vcon.branch %></strong></span>
+        <span>Channel: <strong><%= @vcon.channel&.titleize %></strong></span>
+        <span>Priority: <%= priority_badge(@vcon.priority) %></span>
+        <span>Created: <strong><%= @vcon.created_at&.strftime("%b %d, %Y %H:%M") %></strong></span>
+      </div>
+    </div>
+
+    <!-- Conversation Trail (Dialog Chain) -->
+    <div class="rounded-lg bg-white shadow p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Conversation Trail</h2>
+      <% if @vcon.dialogs.any? %>
+        <div class="space-y-4">
+          <% @vcon.dialogs.chronological.each do |dialog| %>
+            <% speaker = dialog.speaker(@vcon) %>
+            <% is_agent = speaker&.role == "agent" || speaker&.role == "supervisor" %>
+            <div class="flex <%= is_agent ? 'justify-end' : 'justify-start' %>">
+              <div class="max-w-md rounded-lg p-4 <%= is_agent ? 'bg-cyan-50 border border-cyan-200' : 'bg-gray-100 border border-gray-200' %>">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-xs font-semibold <%= is_agent ? 'text-cyan-700' : 'text-gray-700' %>">
+                    <%= speaker&.display_name || "Unknown" %>
+                    <% if speaker&.role %>
+                      (<%= speaker.role.titleize %>)
+                    <% end %>
+                  </span>
+                  <span class="text-xs text-gray-400">
+                    <%= dialog.start_time&.strftime("%H:%M") %>
+                  </span>
+                </div>
+                <p class="text-sm text-gray-800"><%= dialog.body %></p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-500">No dialog entries recorded</p>
+      <% end %>
+    </div>
+
+    <!-- Analysis / Summary -->
+    <% if @vcon.summary.present? %>
+      <div class="rounded-lg bg-white shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-2">AI Summary</h2>
+        <p class="text-sm text-gray-700"><%= @vcon.summary %></p>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="space-y-6">
+    <!-- Parties -->
+    <div class="rounded-lg bg-white shadow p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Participants</h2>
+      <div class="space-y-3">
+        <% @vcon.parties.order(:party_index).each do |party| %>
+          <div class="flex items-center gap-3">
+            <div class="h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium
+              <%= party.role == 'agent' ? 'bg-cyan-100 text-cyan-700' : party.role == 'supervisor' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700' %>">
+              <%= party.display_name.first.upcase %>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-900"><%= party.display_name %></p>
+              <p class="text-xs text-gray-500"><%= party.role&.titleize %> · <%= party.mailto || party.tel %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Consent Info -->
+    <% consent = @vcon.consent_data %>
+    <% if consent.any? %>
+      <div class="rounded-lg bg-white shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Consent</h2>
+        <dl class="space-y-2 text-sm">
+          <div class="flex justify-between">
+            <dt class="text-gray-500">Status</dt>
+            <dd class="font-medium <%= consent['consent_given'] ? 'text-green-600' : 'text-red-600' %>">
+              <%= consent['consent_given'] ? 'Given' : 'Not Given' %>
+            </dd>
+          </div>
+          <% if consent['consent_law'] %>
+            <div class="flex justify-between">
+              <dt class="text-gray-500">Law</dt>
+              <dd class="font-medium text-gray-900"><%= consent['consent_law'] %></dd>
+            </div>
+          <% end %>
+          <% if consent['consent_purpose'] %>
+            <div class="flex justify-between">
+              <dt class="text-gray-500">Purpose</dt>
+              <dd class="font-medium text-gray-900"><%= consent['consent_purpose'] %></dd>
+            </div>
+          <% end %>
+          <% if consent['consent_granted_date'] %>
+            <div class="flex justify-between">
+              <dt class="text-gray-500">Granted</dt>
+              <dd class="font-medium text-gray-900"><%= consent['consent_granted_date'] %></dd>
+            </div>
+          <% end %>
+          <% if consent['consent_expiry_date'] %>
+            <% expired = Date.parse(consent['consent_expiry_date']) < Date.today rescue false %>
+            <div class="flex justify-between">
+              <dt class="text-gray-500">Expires</dt>
+              <dd class="font-medium <%= expired ? 'text-red-600' : 'text-gray-900' %>">
+                <%= consent['consent_expiry_date'] %> <%= '(EXPIRED)' if expired %>
+              </dd>
+            </div>
+          <% end %>
+        </dl>
+      </div>
+    <% end %>
+
+    <!-- Sentiment -->
+    <% sentiment = @vcon.sentiment %>
+    <% if sentiment.is_a?(Hash) %>
+      <div class="rounded-lg bg-white shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-2">Sentiment</h2>
+        <div class="text-center">
+          <p class="text-3xl font-bold
+            <%= sentiment['label'] == 'positive' ? 'text-green-600' : sentiment['label'] == 'negative' ? 'text-red-600' : 'text-yellow-600' %>">
+            <%= sentiment['label']&.titleize %>
+          </p>
+          <% if sentiment['score'] %>
+            <p class="text-sm text-gray-500">Score: <%= sentiment['score'] %></p>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
