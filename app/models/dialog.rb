@@ -7,9 +7,10 @@ class Dialog < ApplicationRecord
 
   scope :chronological, -> { order(start_time: :asc) }
 
+  # Uses detect on preloaded parties instead of find_by to avoid N+1 queries.
   def speaker(vcon_record = nil)
     return nil unless parties.present? && vcon_record.present?
-    party_index = parties.first
-    vcon_record.parties.find_by(party_index: party_index)
+    idx = parties.first
+    vcon_record.parties.detect { |p| p.party_index == idx }
   end
 end

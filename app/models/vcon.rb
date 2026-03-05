@@ -9,26 +9,26 @@ class Vcon < ApplicationRecord
   has_many :analyses, class_name: "Analysis", foreign_key: :vcon_id, dependent: :destroy
   has_many :vcon_attachments, class_name: "VconAttachment", foreign_key: :vcon_id, dependent: :destroy
 
-  # Tags are stored as attachments with type='tags'
-  has_many :tag_attachments, -> { where(type: "tags") }, class_name: "VconAttachment", foreign_key: :vcon_id
-
   scope :recent, -> { order(created_at: :desc) }
-  scope :by_branch, ->(branch) { joins(:tag_attachments).where("attachments.body LIKE ?", "%branch:#{branch}%") }
-  scope :by_status, ->(status) { joins(:tag_attachments).where("attachments.body LIKE ?", "%status:#{status}%") }
+
+  # Uses detect on preloaded collections instead of find_by to avoid N+1 queries.
+  # All accessor methods are memoized so each JSON parse happens at most once per instance.
 
   def tags
-    tag_attachment = vcon_attachments.find_by(type: "tags")
-    return {} unless tag_attachment&.body.present?
+    @tags ||= begin
+      tag_attachment = vcon_attachments.detect { |a| a.type == "tags" }
+      return {} unless tag_attachment&.body.present?
 
-    parsed = JSON.parse(tag_attachment.body)
-    tags_hash = {}
-    Array(parsed).each do |tag_str|
-      key, value = tag_str.to_s.split(":", 2)
-      tags_hash[key] = value if key.present?
+      parsed = JSON.parse(tag_attachment.body)
+      tags_hash = {}
+      Array(parsed).each do |tag_str|
+        key, value = tag_str.to_s.split(":", 2)
+        tags_hash[key] = value if key.present?
+      end
+      tags_hash
+    rescue JSON::ParserError
+      {}
     end
-    tags_hash
-  rescue JSON::ParserError
-    {}
   end
 
   def branch
@@ -52,31 +52,37 @@ class Vcon < ApplicationRecord
   end
 
   def sentiment
-    sentiment_analysis = analyses.find_by(type: "sentiment")
-    return nil unless sentiment_analysis&.body.present?
-    JSON.parse(sentiment_analysis.body)
-  rescue JSON::ParserError
-    nil
+    @sentiment ||= begin
+      sentiment_analysis = analyses.detect { |a| a.type == "sentiment" }
+      return nil unless sentiment_analysis&.body.present?
+      JSON.parse(sentiment_analysis.body)
+    rescue JSON::ParserError
+      nil
+    end
   end
 
   def summary
-    summary_analysis = analyses.find_by(type: "summary")
-    summary_analysis&.body
+    @summary ||= begin
+      summary_analysis = analyses.detect { |a| a.type == "summary" }
+      summary_analysis&.body
+    end
   end
 
   def consent_data
-    consent_attachment = vcon_attachments.find_by(type: "consent")
-    return {} unless consent_attachment&.body.present?
-    JSON.parse(consent_attachment.body)
-  rescue JSON::ParserError
-    {}
+    @consent_data ||= begin
+      consent_attachment = vcon_attachments.detect { |a| a.type == "consent" }
+      return {} unless consent_attachment&.body.present?
+      JSON.parse(consent_attachment.body)
+    rescue JSON::ParserError
+      {}
+    end
   end
 
   def agent
-    parties.find_by("metadata->>'role' = ?", "agent")
+    @agent ||= parties.detect { |p| p.metadata&.dig("role") == "agent" }
   end
 
   def customer
-    parties.find_by("metadata->>'role' = ?", "customer")
+    @customer ||= parties.detect { |p| p.metadata&.dig("role") == "customer" }
   end
 end
