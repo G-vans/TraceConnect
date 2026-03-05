@@ -1,84 +1,80 @@
 <% content_for(:title) { "#{@vcon.subject} — TraceConnect" } %>
 
-<!-- Back Link -->
-<div class="mb-4">
-  <%= link_to "← Back to Conversations", conversations_path, class: "text-sm text-cyan-600 hover:text-cyan-800" %>
+<div style="margin-bottom: 1rem;">
+  <%= link_to "← Back to Conversations", conversations_path, style: "font-size: 0.8125rem; color: var(--text-secondary); text-decoration: none;" %>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
   <!-- Main Content -->
-  <div class="lg:col-span-2 space-y-6">
+  <div style="display: flex; flex-direction: column; gap: 1rem;">
     <!-- Conversation Header -->
-    <div class="rounded-lg bg-white shadow p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h1 class="text-xl font-bold text-gray-900">
-          <%= channel_icon(@vcon.channel) %> <%= @vcon.subject || "Untitled Conversation" %>
+    <div class="card-padded">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+        <h1 style="font-size: 1.125rem; font-weight: 600;">
+          <%= channel_label(@vcon.channel) %> <%= @vcon.subject || "Untitled Conversation" %>
         </h1>
         <%= status_badge(@vcon.status) %>
       </div>
-      <div class="flex gap-4 text-sm text-gray-500">
-        <span>Branch: <strong><%= @vcon.branch %></strong></span>
-        <span>Channel: <strong><%= @vcon.channel&.titleize %></strong></span>
+      <div style="display: flex; gap: 1rem; font-size: 0.75rem;" class="text-secondary">
+        <span>Branch: <strong class="text-primary"><%= @vcon.branch %></strong></span>
+        <span>Channel: <strong class="text-primary"><%= @vcon.channel&.humanize %></strong></span>
         <span>Priority: <%= priority_badge(@vcon.priority) %></span>
-        <span>Created: <strong><%= @vcon.created_at&.strftime("%b %d, %Y %H:%M") %></strong></span>
+        <span>Created: <strong class="text-primary"><%= @vcon.created_at&.strftime("%b %d, %Y %H:%M") %></strong></span>
       </div>
     </div>
 
-    <!-- Conversation Trail (Dialog Chain) -->
-    <div class="rounded-lg bg-white shadow p-6">
-      <h2 class="text-lg font-semibold text-gray-900 mb-4">Conversation Trail</h2>
+    <!-- Conversation Trail -->
+    <div class="card-padded">
+      <h2 class="section-title">Conversation Trail</h2>
       <% if @vcon.dialogs.any? %>
-        <div class="space-y-4">
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
           <% @vcon.dialogs.chronological.each do |dialog| %>
             <% speaker = dialog.speaker(@vcon) %>
             <% is_agent = speaker&.role == "agent" || speaker&.role == "supervisor" %>
-            <div class="flex <%= is_agent ? 'justify-end' : 'justify-start' %>">
-              <div class="max-w-md rounded-lg p-4 <%= is_agent ? 'bg-cyan-50 border border-cyan-200' : 'bg-gray-100 border border-gray-200' %>">
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="text-xs font-semibold <%= is_agent ? 'text-cyan-700' : 'text-gray-700' %>">
+            <div style="display: flex; <%= is_agent ? 'justify-content: flex-end;' : 'justify-content: flex-start;' %>">
+              <div class="<%= is_agent ? 'dialog-bubble dialog-bubble-agent' : 'dialog-bubble' %>">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                  <span style="font-size: 0.6875rem; font-weight: 600;">
                     <%= speaker&.display_name || "Unknown" %>
                     <% if speaker&.role %>
-                      (<%= speaker.role.titleize %>)
+                      <span class="text-tertiary">(<%= speaker.role.humanize %>)</span>
                     <% end %>
                   </span>
-                  <span class="text-xs text-gray-400">
-                    <%= dialog.start_time&.strftime("%H:%M") %>
-                  </span>
+                  <span class="text-tertiary" style="font-size: 0.6875rem;"><%= dialog.start_time&.strftime("%H:%M") %></span>
                 </div>
-                <p class="text-sm text-gray-800"><%= dialog.body %></p>
+                <p style="font-size: 0.8125rem;"><%= dialog.body %></p>
               </div>
             </div>
           <% end %>
         </div>
       <% else %>
-        <p class="text-sm text-gray-500">No dialog entries recorded</p>
+        <p class="text-secondary" style="font-size: 0.8125rem;">No dialog entries recorded</p>
       <% end %>
     </div>
 
-    <!-- Analysis / Summary -->
+    <!-- AI Summary -->
     <% if @vcon.summary.present? %>
-      <div class="rounded-lg bg-white shadow p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-2">AI Summary</h2>
-        <p class="text-sm text-gray-700"><%= @vcon.summary %></p>
+      <div class="card-padded">
+        <h2 class="section-title">AI Summary</h2>
+        <p style="font-size: 0.8125rem;" class="text-secondary"><%= @vcon.summary %></p>
       </div>
     <% end %>
   </div>
 
   <!-- Sidebar -->
-  <div class="space-y-6">
-    <!-- Parties -->
-    <div class="rounded-lg bg-white shadow p-6">
-      <h2 class="text-lg font-semibold text-gray-900 mb-4">Participants</h2>
-      <div class="space-y-3">
+  <div style="display: flex; flex-direction: column; gap: 1rem;">
+    <!-- Participants -->
+    <div class="card-padded">
+      <h2 class="section-title">Participants</h2>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
         <% @vcon.parties.order(:party_index).each do |party| %>
-          <div class="flex items-center gap-3">
-            <div class="h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium
-              <%= party.role == 'agent' ? 'bg-cyan-100 text-cyan-700' : party.role == 'supervisor' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700' %>">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div style="width: 2rem; height: 2rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; background: var(--bg-muted); color: var(--text-secondary);">
               <%= party.display_name.first.upcase %>
             </div>
             <div>
-              <p class="text-sm font-medium text-gray-900"><%= party.display_name %></p>
-              <p class="text-xs text-gray-500"><%= party.role&.titleize %> · <%= party.mailto || party.tel %></p>
+              <p style="font-size: 0.8125rem; font-weight: 500;"><%= party.display_name %></p>
+              <p class="text-tertiary" style="font-size: 0.6875rem;"><%= party.role&.humanize %> · <%= party.mailto || party.tel %></p>
             </div>
           </div>
         <% end %>
@@ -88,60 +84,57 @@
     <!-- Consent Info -->
     <% consent = @vcon.consent_data %>
     <% if consent.any? %>
-      <div class="rounded-lg bg-white shadow p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Consent</h2>
-        <dl class="space-y-2 text-sm">
-          <div class="flex justify-between">
-            <dt class="text-gray-500">Status</dt>
-            <dd class="font-medium <%= consent['consent_given'] ? 'text-green-600' : 'text-red-600' %>">
+      <div class="card-padded">
+        <h2 class="section-title">Consent</h2>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.8125rem;">
+          <div style="display: flex; justify-content: space-between;">
+            <span class="text-secondary">Status</span>
+            <span style="font-weight: 500; color: <%= consent['consent_given'] ? 'var(--status-green)' : 'var(--status-red)' %>;">
               <%= consent['consent_given'] ? 'Given' : 'Not Given' %>
-            </dd>
+            </span>
           </div>
           <% if consent['consent_law'] %>
-            <div class="flex justify-between">
-              <dt class="text-gray-500">Law</dt>
-              <dd class="font-medium text-gray-900"><%= consent['consent_law'] %></dd>
+            <div style="display: flex; justify-content: space-between;">
+              <span class="text-secondary">Law</span>
+              <span style="font-weight: 500;"><%= consent['consent_law'] %></span>
             </div>
           <% end %>
           <% if consent['consent_purpose'] %>
-            <div class="flex justify-between">
-              <dt class="text-gray-500">Purpose</dt>
-              <dd class="font-medium text-gray-900"><%= consent['consent_purpose'] %></dd>
+            <div style="display: flex; justify-content: space-between;">
+              <span class="text-secondary">Purpose</span>
+              <span style="font-weight: 500;"><%= consent['consent_purpose'] %></span>
             </div>
           <% end %>
           <% if consent['consent_granted_date'] %>
-            <div class="flex justify-between">
-              <dt class="text-gray-500">Granted</dt>
-              <dd class="font-medium text-gray-900"><%= consent['consent_granted_date'] %></dd>
+            <div style="display: flex; justify-content: space-between;">
+              <span class="text-secondary">Granted</span>
+              <span style="font-weight: 500;"><%= consent['consent_granted_date'] %></span>
             </div>
           <% end %>
           <% if consent['consent_expiry_date'] %>
             <% expired = Date.parse(consent['consent_expiry_date']) < Date.today rescue false %>
-            <div class="flex justify-between">
-              <dt class="text-gray-500">Expires</dt>
-              <dd class="font-medium <%= expired ? 'text-red-600' : 'text-gray-900' %>">
+            <div style="display: flex; justify-content: space-between;">
+              <span class="text-secondary">Expires</span>
+              <span style="font-weight: 500; color: <%= expired ? 'var(--status-red)' : 'var(--text-primary)' %>;">
                 <%= consent['consent_expiry_date'] %> <%= '(EXPIRED)' if expired %>
-              </dd>
+              </span>
             </div>
           <% end %>
-        </dl>
+        </div>
       </div>
     <% end %>
 
     <!-- Sentiment -->
     <% sentiment = @vcon.sentiment %>
     <% if sentiment.is_a?(Hash) %>
-      <div class="rounded-lg bg-white shadow p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-2">Sentiment</h2>
-        <div class="text-center">
-          <p class="text-3xl font-bold
-            <%= sentiment['label'] == 'positive' ? 'text-green-600' : sentiment['label'] == 'negative' ? 'text-red-600' : 'text-yellow-600' %>">
-            <%= sentiment['label']&.titleize %>
-          </p>
-          <% if sentiment['score'] %>
-            <p class="text-sm text-gray-500">Score: <%= sentiment['score'] %></p>
-          <% end %>
+      <div class="card-padded" style="text-align: center;">
+        <h2 class="section-title" style="text-align: left;">Sentiment</h2>
+        <div style="font-size: 1.25rem; font-weight: 600; color: <%= sentiment['label'] == 'positive' ? 'var(--status-green)' : sentiment['label'] == 'negative' ? 'var(--status-red)' : 'var(--status-yellow)' %>;">
+          <%= sentiment['label']&.humanize %>
         </div>
+        <% if sentiment['score'] %>
+          <div class="text-secondary" style="font-size: 0.75rem;">Score: <%= sentiment['score'] %></div>
+        <% end %>
       </div>
     <% end %>
   </div>

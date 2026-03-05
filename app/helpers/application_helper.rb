@@ -3,51 +3,44 @@
 module ApplicationHelper
   def nav_link(text, path)
     active = current_page?(path)
-    css = if active
-      "rounded-md bg-slate-800 px-3 py-2 text-sm font-medium text-white"
-    else
-      "rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700 hover:text-white"
-    end
+    css = active ? "nav-link nav-link-active" : "nav-link"
     link_to text, path, class: css
   end
 
   def status_badge(status)
-    colors = {
-      "open" => "bg-yellow-100 text-yellow-800",
-      "in_progress" => "bg-blue-100 text-blue-800",
-      "resolved" => "bg-green-100 text-green-800"
+    css_map = {
+      "open" => "badge badge-open",
+      "in_progress" => "badge badge-in-progress",
+      "resolved" => "badge badge-resolved"
     }
-    css = colors[status] || "bg-gray-100 text-gray-800"
-    content_tag :span, status&.titleize || "Unknown",
-      class: "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium #{css}"
+    css = css_map[status] || "badge badge-neutral"
+    content_tag :span, status&.humanize || "Unknown", class: css
   end
 
   def priority_badge(priority)
-    colors = {
-      "high" => "bg-red-100 text-red-800",
-      "medium" => "bg-yellow-100 text-yellow-800",
-      "low" => "bg-green-100 text-green-800"
+    css_map = {
+      "high" => "badge badge-high",
+      "medium" => "badge badge-medium",
+      "low" => "badge badge-low"
     }
-    css = colors[priority] || "bg-gray-100 text-gray-800"
-    content_tag :span, priority&.titleize || "—",
-      class: "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium #{css}"
+    css = css_map[priority] || "badge badge-neutral"
+    content_tag :span, priority&.humanize || "—", class: css
   end
 
-  def channel_icon(channel)
+  def channel_label(channel)
     icons = { "call" => "📞", "email" => "📧", "chat" => "💬" }
-    icons[channel] || "📝"
+    "#{icons[channel] || '📝'} #{channel&.humanize}"
   end
 
   def consent_badge(status)
-    colors = {
-      "green" => "bg-green-100 text-green-800",
-      "yellow" => "bg-yellow-100 text-yellow-800",
-      "red" => "bg-red-100 text-red-800"
+    css_map = {
+      "green" => "badge badge-compliant",
+      "yellow" => "badge badge-expiring",
+      "red" => "badge badge-expired"
     }
     labels = { "green" => "Compliant", "yellow" => "Expiring Soon", "red" => "Expired" }
-    css = colors[status] || "bg-gray-100 text-gray-800"
-    content_tag :span, labels[status] || "Unknown",
-      class: "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium #{css}"
+    css = css_map[status] || "badge badge-neutral"
+    content_tag :span, labels[status] || "Unknown", class: css
   end
 
   def format_hours(hours)
