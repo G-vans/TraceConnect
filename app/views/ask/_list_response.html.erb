@@ -1,0 +1,31 @@
+<div class="ask-msg-system">
+  <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-bottom: 0.5rem;">
+    Found <%= total %> result<%= total == 1 ? '' : 's' %> for <%= description %>
+  </div>
+  <% if vcons.any? %>
+    <div style="display: flex; flex-direction: column; gap: 0.375rem;">
+      <% vcons.each do |vcon| %>
+        <%= link_to conversation_path(vcon),
+            style: "display: block; padding: 0.375rem 0.5rem; border-radius: 6px; border: 1px solid var(--border-subtle); text-decoration: none; color: inherit; transition: background 0.15s;",
+            data: { turbo_frame: "_top" } do %>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 0.75rem; font-weight: 500; color: var(--text-primary);">
+              <%= truncate(vcon.subject || "Untitled", length: 35) %>
+            </span>
+            <%= status_badge(vcon.status) %>
+          </div>
+          <div style="font-size: 0.6875rem; color: var(--text-tertiary); margin-top: 0.125rem;">
+            <%= vcon.branch %> · <%= vcon.agent&.display_name || "—" %> · <%= vcon.created_at&.strftime("%b %d") %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+    <% if total > 10 %>
+      <div style="font-size: 0.6875rem; color: var(--text-tertiary); margin-top: 0.5rem; text-align: center;">
+        Showing 10 of <%= total %>
+      </div>
+    <% end %>
+  <% else %>
+    <p style="font-size: 0.8125rem; color: var(--text-secondary);">No conversations found.</p>
+  <% end %>
+</div>

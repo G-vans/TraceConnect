@@ -1,0 +1,57 @@
+<div class="ask-msg-system">
+  <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-bottom: 0.5rem;">
+    Consent status for <%= description %>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.375rem; margin-bottom: 0.5rem;">
+    <div class="ask-result-stat">
+      <span style="font-weight: 600; color: var(--status-red);"><%= expired.size %></span>
+      <span style="font-size: 0.6875rem; color: var(--text-secondary);">Expired</span>
+    </div>
+    <div class="ask-result-stat">
+      <span style="font-weight: 600; color: var(--status-yellow);"><%= expiring.size %></span>
+      <span style="font-size: 0.6875rem; color: var(--text-secondary);">Expiring</span>
+    </div>
+    <div class="ask-result-stat">
+      <span style="font-weight: 600; color: var(--status-green);"><%= valid.size %></span>
+      <span style="font-size: 0.6875rem; color: var(--text-secondary);">Valid</span>
+    </div>
+  </div>
+
+  <% if expired.any? %>
+    <div style="margin-top: 0.5rem;">
+      <div style="font-size: 0.6875rem; font-weight: 500; color: var(--status-red); margin-bottom: 0.25rem;">
+        Expired consent (<%= expired.size %>):
+      </div>
+      <% expired.first(5).each do |vcon| %>
+        <%= link_to conversation_path(vcon),
+            style: "display: block; padding: 0.25rem 0.375rem; border-radius: 4px; font-size: 0.6875rem; text-decoration: none; color: var(--text-primary);",
+            data: { turbo_frame: "_top" } do %>
+          <%= truncate(vcon.subject || "Untitled", length: 30) %>
+          <span style="color: var(--text-tertiary);"> · <%= vcon.branch %></span>
+        <% end %>
+      <% end %>
+      <% if expired.size > 5 %>
+        <div style="font-size: 0.6875rem; color: var(--text-tertiary); margin-top: 0.25rem;">
+          + <%= expired.size - 5 %> more
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if expiring.any? %>
+    <div style="margin-top: 0.5rem;">
+      <div style="font-size: 0.6875rem; font-weight: 500; color: var(--status-yellow); margin-bottom: 0.25rem;">
+        Expiring soon (<%= expiring.size %>):
+      </div>
+      <% expiring.first(5).each do |vcon| %>
+        <%= link_to conversation_path(vcon),
+            style: "display: block; padding: 0.25rem 0.375rem; border-radius: 4px; font-size: 0.6875rem; text-decoration: none; color: var(--text-primary);",
+            data: { turbo_frame: "_top" } do %>
+          <%= truncate(vcon.subject || "Untitled", length: 30) %>
+          <span style="color: var(--text-tertiary);"> · <%= vcon.branch %></span>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,20 @@
+<div class="ask-msg-system">
+  <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-bottom: 0.5rem;">
+    Top agents by resolved conversations
+  </div>
+  <% if agents.any? %>
+    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+      <% agents.each_with_index do |(name, count), idx| %>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.25rem 0;">
+          <span style="font-size: 0.8125rem;">
+            <span style="color: var(--text-tertiary); font-size: 0.6875rem;"><%= idx + 1 %>.</span>
+            <span style="font-weight: 500;"><%= name %></span>
+          </span>
+          <span class="badge badge-resolved"><%= count %> resolved</span>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p style="font-size: 0.8125rem; color: var(--text-secondary);">No resolved conversations found.</p>
+  <% end %>
+</div>

@@ -1,0 +1,28 @@
+<div class="ask-msg-system">
+  <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-bottom: 0.5rem;">
+    Stats for <%= description %>
+  </div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.375rem;">
+    <div class="ask-result-stat">
+      <span style="font-weight: 600;"><%= total %></span>
+      <span style="font-size: 0.6875rem; color: var(--text-secondary);">Total</span>
+    </div>
+    <div class="ask-result-stat">
+      <span style="font-weight: 600; color: var(--status-yellow);"><%= open_count %></span>
+      <span style="font-size: 0.6875rem; color: var(--text-secondary);">Open</span>
+    </div>
+    <div class="ask-result-stat">
+      <span style="font-weight: 600; color: var(--status-blue);"><%= in_progress %></span>
+      <span style="font-size: 0.6875rem; color: var(--text-secondary);">In Progress</span>
+    </div>
+    <div class="ask-result-stat">
+      <span style="font-weight: 600; color: var(--status-green);"><%= resolved %></span>
+      <span style="font-size: 0.6875rem; color: var(--text-secondary);">Resolved</span>
+    </div>
+  </div>
+  <% if high_priority > 0 %>
+    <div style="margin-top: 0.5rem; font-size: 0.75rem; color: var(--status-red);">
+      <%= high_priority %> high priority
+    </div>
+  <% end %>
+</div>

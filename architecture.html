@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TraceConnect — Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f7f4; --surface: #fff; --text: #26251e;
+    --muted: rgba(38,37,30,0.55); --faint: rgba(38,37,30,0.35);
+    --border: rgba(38,37,30,0.08); --accent: #26251e;
+    --green: #2d8a4e; --green-bg: rgba(45,138,78,0.08);
+    --yellow: #9a7b2d; --yellow-bg: rgba(154,123,45,0.08);
+    --red: #c4432b; --red-bg: rgba(196,67,43,0.08);
+    --blue: #3b6ec2; --blue-bg: rgba(59,110,194,0.08);
+    --purple: #7c3aed; --purple-bg: rgba(124,58,237,0.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; font-size: 14px; line-height: 1.5; }
+
+  .page { max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
+
+  /* Header */
+  .hero { text-align: center; margin-bottom: 3rem; }
+  .hero h1 { font-size: 2.25rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.25rem; }
+  .hero h1 span { color: var(--muted); font-weight: 400; }
+  .hero .tagline { font-size: 1rem; color: var(--muted); }
+  .hero .badges { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; }
+  .badge { padding: 0.2rem 0.75rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; }
+  .badge-dark { background: var(--accent); color: var(--bg); }
+  .badge-blue { background: var(--blue-bg); color: var(--blue); }
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-purple { background: var(--purple-bg); color: var(--purple); }
+
+  /* Section */
+  .section { margin-bottom: 2.5rem; }
+  .section-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--faint); margin-bottom: 0.5rem; }
+  .section-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; }
+
+  /* Cards */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; }
+
+  /* Architecture Diagram */
+  .arch-flow { display: flex; align-items: stretch; gap: 0; justify-content: center; }
+  .arch-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.25rem; text-align: center; flex: 1; max-width: 200px; }
+  .arch-box-title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.375rem; }
+  .arch-box-content { font-size: 0.8rem; color: var(--muted); }
+  .arch-box-icon { font-size: 1.75rem; margin-bottom: 0.5rem; }
+  .arch-arrow { display: flex; align-items: center; justify-content: center; padding: 0 0.5rem; color: var(--faint); font-size: 1.25rem; flex-shrink: 0; }
+  .arch-box.highlight { border-color: var(--blue); background: var(--blue-bg); }
+  .arch-box.highlight .arch-box-title { color: var(--blue); }
+  .arch-box.accent { border-color: var(--green); background: var(--green-bg); }
+  .arch-box.accent .arch-box-title { color: var(--green); }
+  .arch-box.warm { border-color: var(--yellow); background: var(--yellow-bg); }
+  .arch-box.warm .arch-box-title { color: var(--yellow); }
+
+  /* Under the hood grid */
+  .hood-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .hood-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; }
+  .hood-card h3 { font-size: 0.875rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .hood-card p { font-size: 0.8rem; color: var(--muted); }
+  .hood-card code { background: var(--bg); padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.75rem; font-family: 'SF Mono', 'Fira Code', monospace; }
+  .hood-card .mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.7rem; color: var(--muted); margin-top: 0.5rem; background: var(--bg); padding: 0.75rem; border-radius: 8px; line-height: 1.6; white-space: pre; overflow-x: auto; }
+
+  /* Data model */
+  .db-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; }
+  .db-table { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem; text-align: center; }
+  .db-table-name { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
+  .db-table-desc { font-size: 0.65rem; color: var(--faint); }
+  .db-table.primary { border-color: var(--accent); border-width: 2px; }
+
+  /* Pages grid */
+  .pages-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; }
+  .page-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; text-align: center; }
+  .page-card-icon { font-size: 1.5rem; margin-bottom: 0.375rem; }
+  .page-card-name { font-size: 0.8rem; font-weight: 700; margin-bottom: 0.125rem; }
+  .page-card-desc { font-size: 0.65rem; color: var(--faint); }
+  .page-card-route { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.6rem; color: var(--blue); margin-top: 0.375rem; }
+
+  /* Tech stack */
+  .stack-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .stack-chip { display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 0.75rem; font-weight: 500; }
+  .stack-chip .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .dot-red { background: var(--red); }
+  .dot-blue { background: var(--blue); }
+  .dot-green { background: var(--green); }
+  .dot-yellow { background: var(--yellow); }
+  .dot-purple { background: var(--purple); }
+  .dot-dark { background: var(--accent); }
+
+  /* Separator */
+  .sep { height: 1px; background: var(--border); margin: 2.5rem 0; }
+
+  /* vCon spec */
+  .spec-highlight { display: flex; align-items: center; gap: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+  .spec-highlight .spec-icon { font-size: 2.5rem; flex-shrink: 0; }
+  .spec-highlight h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
+  .spec-highlight p { font-size: 0.8rem; color: var(--muted); }
+  .spec-highlight .spec-id { font-family: 'SF Mono', monospace; font-size: 0.7rem; color: var(--blue); margin-top: 0.25rem; }
+
+  /* Footer */
+  .footer { text-align: center; color: var(--faint); font-size: 0.7rem; margin-top: 3rem; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="hero">
+    <h1>TraceConnect <span>Architecture</span></h1>
+    <div class="tagline">Trace the conversation. Connect the dots.</div>
+    <div class="badges">
+      <span class="badge badge-dark">VCONIC TADHack 2026</span>
+      <span class="badge badge-blue">IETF vCon Standard</span>
+      <span class="badge badge-green">Rails 8.1</span>
+      <span class="badge badge-purple">MCP Protocol</span>
+    </div>
+  </div>
+
+  <!-- The Problem & Solution -->
+  <div class="section">
+    <div class="section-label">The Problem</div>
+    <div class="card" style="margin-bottom: 1rem;">
+      <p style="font-size: 0.9rem;">Distributed teams across Nairobi, Lagos, and New York handle customer conversations through calls, emails, and chats &mdash; but <strong>no one has a unified view</strong>. Compliance gaps go unnoticed, patterns repeat across branches, and agent performance is invisible.</p>
+    </div>
+    <div class="section-label">The Solution</div>
+    <div class="card">
+      <p style="font-size: 0.9rem;">TraceConnect reads <strong>vCon conversation records</strong> from a shared database and presents a <strong>Conversation Radar</strong> &mdash; pattern detection across branches, consent tracking per local law (Kenya DPA, Nigeria NDPR, US TCPA), performance rankings, and an in-app smart search sidebar.</p>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- Architecture Flow -->
+  <div class="section">
+    <div class="section-label">System Architecture</div>
+    <div class="section-title">How It All Connects</div>
+    <div class="arch-flow">
+      <div class="arch-box warm">
+        <div class="arch-box-icon">&#x1f4de;</div>
+        <div class="arch-box-title">Conversations</div>
+        <div class="arch-box-content">Calls, emails, chats from 3 branches across 3 countries</div>
+      </div>
+      <div class="arch-arrow">&rarr;</div>
+      <div class="arch-box highlight">
+        <div class="arch-box-icon">&#x1f4e6;</div>
+        <div class="arch-box-title">vCon MCP Server</div>
+        <div class="arch-box-content">Stores conversations as IETF vCon records via MCP protocol</div>
+      </div>
+      <div class="arch-arrow">&rarr;</div>
+      <div class="arch-box" style="border-color: var(--purple); background: var(--purple-bg);">
+        <div class="arch-box-icon">&#x1f5c4;</div>
+        <div class="arch-box-title">Supabase PostgreSQL</div>
+        <div class="arch-box-content">Shared database &mdash; single source of truth for all vCon data</div>
+      </div>
+      <div class="arch-arrow">&rarr;</div>
+      <div class="arch-box accent">
+        <div class="arch-box-icon">&#x1f4e1;</div>
+        <div class="arch-box-title">TraceConnect</div>
+        <div class="arch-box-content">Rails 8.1 app reads same DB &mdash; Radar, Consent, Performance, Ask</div>
+      </div>
+      <div class="arch-arrow">&rarr;</div>
+      <div class="arch-box">
+        <div class="arch-box-icon">&#x1f9d1;&#x200d;&#x1f4bc;</div>
+        <div class="arch-box-title">HQ Team</div>
+        <div class="arch-box-content">Sees all branches, patterns, compliance &amp; agent rankings at a glance</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- vCon Standard -->
+  <div class="section">
+    <div class="section-label">Built On</div>
+    <div class="spec-highlight">
+      <div class="spec-icon">&#x1f4dc;</div>
+      <div>
+        <h3>IETF vCon Standard</h3>
+        <p>Each conversation is a <strong>Virtual Conversation Container</strong> &mdash; an open standard that captures parties, dialog, AI analysis, consent, and metadata in one portable record. TraceConnect reads vCons natively.</p>
+        <div class="spec-id">draft-ietf-vcon-vcon-core-00</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- Data Model -->
+  <div class="section">
+    <div class="section-label">Data Model</div>
+    <div class="section-title">vCon Database Schema</div>
+    <div class="db-grid">
+      <div class="db-table primary">
+        <div class="db-table-name">vcons</div>
+        <div class="db-table-desc">uuid, subject, timestamps</div>
+      </div>
+      <div class="db-table">
+        <div class="db-table-name">parties</div>
+        <div class="db-table-desc">name, email, tel, role</div>
+      </div>
+      <div class="db-table">
+        <div class="db-table-name">dialog</div>
+        <div class="db-table-desc">type, body, start_time</div>
+      </div>
+      <div class="db-table">
+        <div class="db-table-name">analysis</div>
+        <div class="db-table-desc">sentiment, summary, AI vendor</div>
+      </div>
+      <div class="db-table">
+        <div class="db-table-name">attachments</div>
+        <div class="db-table-desc">tags, consent data (JSON)</div>
+      </div>
+    </div>
+    <p style="font-size: 0.7rem; color: var(--faint); text-align: center; margin-top: 0.75rem;">All tables owned by vCon MCP Server &mdash; Rails models are read-only mappings with zero migrations</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- App Pages -->
+  <div class="section">
+    <div class="section-label">Application</div>
+    <div class="section-title">Five Views, One Radar</div>
+    <div class="pages-grid">
+      <div class="page-card">
+        <div class="page-card-icon">&#x1f4e1;</div>
+        <div class="page-card-name">Radar</div>
+        <div class="page-card-desc">Branch cards, pattern alerts, weekly stats</div>
+        <div class="page-card-route">GET /</div>
+      </div>
+      <div class="page-card">
+        <div class="page-card-icon">&#x1f4ac;</div>
+        <div class="page-card-name">Conversations</div>
+        <div class="page-card-desc">Filterable list, full dialog trail, AI summary</div>
+        <div class="page-card-route">GET /conversations</div>
+      </div>
+      <div class="page-card">
+        <div class="page-card-icon">&#x1f512;</div>
+        <div class="page-card-name">Consent</div>
+        <div class="page-card-desc">Per-law tracking, expired/expiring/valid</div>
+        <div class="page-card-route">GET /consent</div>
+      </div>
+      <div class="page-card">
+        <div class="page-card-icon">&#x1f4ca;</div>
+        <div class="page-card-name">Performance</div>
+        <div class="page-card-desc">Resolution time charts, top agents, sentiment</div>
+        <div class="page-card-route">GET /performance</div>
+      </div>
+      <div class="page-card">
+        <div class="page-card-icon">&#x1f50d;</div>
+        <div class="page-card-name">Ask Sidebar</div>
+        <div class="page-card-desc">Smart search: stats, compare, consent, agents</div>
+        <div class="page-card-route">POST /ask</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- Under the Hood -->
+  <div class="section">
+    <div class="section-label">Under the Hood</div>
+    <div class="section-title">How It Works</div>
+    <div class="hood-grid">
+      <div class="hood-card">
+        <h3>&#x1f50c; Shared Database, Zero Duplication</h3>
+        <p>The vCon MCP Server and TraceConnect point to the <strong>same Supabase PostgreSQL</strong> instance. Rails maps its models directly to vCon tables &mdash; no ETL, no sync jobs, no data copies.</p>
+        <div class="mono">config/database.yml
+  url: ENV["DATABASE_URL"]
+  # Same Supabase connection string
+  # as the vCon MCP Server</div>
+      </div>
+      <div class="hood-card">
+        <h3>&#x1f9e0; Pattern Detection</h3>
+        <p>The Radar automatically scans issue categories across all branches. When the <strong>same issue appears in 2+ branches</strong>, it fires a Pattern Alert &mdash; e.g., "product_defect reported in both Lagos AND Nairobi."</p>
+        <div class="mono">category_branches.select do |cat, branches|
+  branches.keys.size >= 2
+end
+# Cross-branch pattern = systemic issue</div>
+      </div>
+      <div class="hood-card">
+        <h3>&#x1f4dc; Consent as First-Class Data</h3>
+        <p>Each vCon carries consent metadata: <code>consent_given</code>, <code>consent_law</code>, <code>consent_expiry_date</code>. TraceConnect checks expiry against local privacy laws (Kenya DPA, Nigeria NDPR, US TCPA) and blocks expired records.</p>
+        <div class="mono">{
+  "consent_given": true,
+  "consent_law": "Nigeria NDPR",
+  "consent_expiry_date": "2026-03-01"
+}
+# Expired -> grayed out, AI blocked</div>
+      </div>
+      <div class="hood-card">
+        <h3>&#x1f50d; Ask Sidebar &mdash; Smart Search</h3>
+        <p>The sidebar uses a <code>QueryParser</code> that extracts intent + filters from keywords. No external AI API &mdash; pure Ruby pattern matching with synonym maps. Results stream back via <strong>Turbo Streams</strong>.</p>
+        <div class="mono">"compare Nairobi and Lagos billing"
+  -> intent:  :compare
+  -> branches: [Nairobi, Lagos]
+  -> category: billing
+  -> Turbo Stream append response</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- Tech Stack -->
+  <div class="section">
+    <div class="section-label">Tech Stack</div>
+    <div class="stack-row">
+      <div class="stack-chip"><span class="dot dot-red"></span> Ruby on Rails 8.1</div>
+      <div class="stack-chip"><span class="dot dot-blue"></span> PostgreSQL (Supabase)</div>
+      <div class="stack-chip"><span class="dot dot-green"></span> Hotwire (Turbo + Stimulus)</div>
+      <div class="stack-chip"><span class="dot dot-purple"></span> vCon MCP Server</div>
+      <div class="stack-chip"><span class="dot dot-yellow"></span> Chartkick + Groupdate</div>
+      <div class="stack-chip"><span class="dot dot-dark"></span> Tailwind CSS 4.0</div>
+      <div class="stack-chip"><span class="dot dot-blue"></span> ImportMap (no Node build)</div>
+      <div class="stack-chip"><span class="dot dot-red"></span> Propshaft</div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- Demo Script -->
+  <div class="section">
+    <div class="section-label">Demo Script (4 min)</div>
+    <div class="section-title">What to Show</div>
+    <div style="display: grid; grid-template-columns: 50px 1fr; gap: 0.5rem 1rem; align-items: start;">
+      <div style="text-align: right; font-size: 0.7rem; font-weight: 700; color: var(--blue); padding-top: 0.15rem;">0:00</div>
+      <div class="card" style="padding: 0.75rem 1rem;">
+        <strong>Radar Dashboard</strong> &mdash; Show 3 branch cards. Point out the Pattern Alert: same issue across multiple countries. "This is how HQ spots systemic problems."
+      </div>
+
+      <div style="text-align: right; font-size: 0.7rem; font-weight: 700; color: var(--blue); padding-top: 0.15rem;">1:00</div>
+      <div class="card" style="padding: 0.75rem 1rem;">
+        <strong>Conversations</strong> &mdash; Filter by branch/status. Click into a conversation: show the full dialog trail (customer &rarr; agent &rarr; supervisor). Show AI summary and sentiment score.
+      </div>
+
+      <div style="text-align: right; font-size: 0.7rem; font-weight: 700; color: var(--blue); padding-top: 0.15rem;">2:00</div>
+      <div class="card" style="padding: 0.75rem 1rem;">
+        <strong>Consent</strong> &mdash; Show per-law compliance (Kenya DPA, Nigeria NDPR, US TCPA). Highlight expired consent: "Consent is not forever &mdash; TraceConnect respects that."
+      </div>
+
+      <div style="text-align: right; font-size: 0.7rem; font-weight: 700; color: var(--blue); padding-top: 0.15rem;">2:45</div>
+      <div class="card" style="padding: 0.75rem 1rem;">
+        <strong>Performance</strong> &mdash; Resolution time bar chart (Nairobi 2h vs Lagos 18h). Top agents table. "Data-driven team management."
+      </div>
+
+      <div style="text-align: right; font-size: 0.7rem; font-weight: 700; color: var(--blue); padding-top: 0.15rem;">3:15</div>
+      <div class="card" style="padding: 0.75rem 1rem;">
+        <strong>Ask Sidebar</strong> &mdash; Open sidebar. Type "compare Nairobi and Lagos". Show instant results. Try "consent" and "top agents". "All from the same vCon data, no extra API."
+      </div>
+
+      <div style="text-align: right; font-size: 0.7rem; font-weight: 700; color: var(--blue); padding-top: 0.15rem;">3:45</div>
+      <div class="card" style="padding: 0.75rem 1rem;">
+        <strong>Architecture slide</strong> &mdash; Switch to this page. Walk through the flow diagram. "One shared database, IETF standard, no data duplication." Close.
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    TraceConnect &mdash; VCONIC TADHack 2026 &mdash; Built with vCon + Rails + MCP
+  </div>
+</div>
+</body>
+</html>

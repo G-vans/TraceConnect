@@ -13,7 +13,7 @@
   </head>
 
   <body>
-    <div style="min-height: 100vh;">
+    <div style="min-height: 100vh;" data-controller="ask">
       <!-- Navigation -->
       <nav class="nav-bar">
         <div style="max-width: 72rem; margin: 0 auto; padding: 0 1.5rem;">
@@ -29,19 +29,83 @@
                 <%= nav_link "Performance", performance_index_path %>
               </div>
             </div>
-            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.4);">
-              Conversation Radar for Distributed Teams
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div style="font-size: 0.75rem; color: rgba(255,255,255,0.4);">
+                Conversation Radar for Distributed Teams
+              </div>
+              <button class="ask-toggle-btn" data-action="click->ask#toggle" title="Ask TraceConnect">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                Ask
+              </button>
             </div>
           </div>
         </div>
       </nav>
 
-      <!-- Page Content -->
-      <main>
-        <div style="max-width: 72rem; margin: 0 auto; padding: 1.5rem;">
-          <%= yield %>
-        </div>
-      </main>
+      <!-- App Shell: Sidebar + Content -->
+      <div class="app-shell">
+        <!-- Ask TraceConnect Sidebar -->
+        <aside class="ask-sidebar" data-ask-target="sidebar">
+          <div class="ask-sidebar-header">
+            <h2>Ask TraceConnect</h2>
+            <button class="ask-collapse-btn" data-action="click->ask#toggle" title="Close sidebar">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="11 17 6 12 11 7"></polyline>
+                <polyline points="18 17 13 12 18 7"></polyline>
+              </svg>
+            </button>
+          </div>
+
+          <div class="ask-messages" data-ask-target="messages" id="ask-messages">
+            <!-- Welcome state -->
+            <div class="ask-welcome" data-ask-target="welcome">
+              <div class="ask-welcome-title">Smart Search</div>
+              <div class="ask-welcome-desc">Search your vCon data with keywords. Type "help" for all options.</div>
+              <div class="ask-suggestions">
+                <button class="ask-chip" data-action="click->ask#clickSuggestion" data-query="stats for Lagos">Lagos stats</button>
+                <button class="ask-chip" data-action="click->ask#clickSuggestion" data-query="compare Nairobi and Lagos">Compare branches</button>
+                <button class="ask-chip" data-action="click->ask#clickSuggestion" data-query="top agents">Top agents</button>
+                <button class="ask-chip" data-action="click->ask#clickSuggestion" data-query="show open high priority">Urgent open</button>
+                <button class="ask-chip" data-action="click->ask#clickSuggestion" data-query="consent">Consent</button>
+                <button class="ask-chip" data-action="click->ask#clickSuggestion" data-query="resolution rate">Resolution rate</button>
+              </div>
+            </div>
+
+            <!-- Loading indicator -->
+            <div class="ask-loading" data-ask-target="loading">
+              <div class="ask-loading-dot"></div>
+              <div class="ask-loading-dot"></div>
+              <div class="ask-loading-dot"></div>
+              <span>Searching...</span>
+            </div>
+          </div>
+
+          <div class="ask-input-area">
+            <form class="ask-input-form" data-action="submit->ask#submitQuery">
+              <input type="text"
+                     class="ask-input"
+                     data-ask-target="input"
+                     placeholder="Ask about conversations..."
+                     autocomplete="off">
+              <button type="submit" class="ask-send-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+              </button>
+            </form>
+          </div>
+        </aside>
+
+        <!-- Page Content -->
+        <main>
+          <div style="max-width: 72rem; margin: 0 auto; padding: 1.5rem;">
+            <%= yield %>
+          </div>
+        </main>
+      </div>
     </div>
   </body>
 </html>

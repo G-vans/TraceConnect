@@ -15,7 +15,7 @@ DELETE FROM vcons;
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000001-0000-0000-0000-000000000001', 'b0000001-0000-0000-0000-000000000001', '0.3.0',
+('a0000001-0000-0000-0000-000000000001', 'a0000001-0000-0000-0000-000000000001', '0.3.0',
  'SmartRouter Pro overheating after firmware update', NOW() - INTERVAL '4 days', NOW() - INTERVAL '4 days');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
@@ -41,7 +41,7 @@ INSERT INTO attachments (vcon_id, attachment_index, type, encoding, body) VALUES
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000002-0000-0000-0000-000000000002', 'b0000002-0000-0000-0000-000000000002', '0.3.0',
+('a0000002-0000-0000-0000-000000000002', 'a0000002-0000-0000-0000-000000000002', '0.3.0',
  'SmartRouter Pro shutting down due to heat', NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
@@ -65,7 +65,7 @@ INSERT INTO attachments (vcon_id, attachment_index, type, encoding, body) VALUES
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000003-0000-0000-0000-000000000003', 'b0000003-0000-0000-0000-000000000003', '0.3.0',
+('a0000003-0000-0000-0000-000000000003', 'a0000003-0000-0000-0000-000000000003', '0.3.0',
  'SmartRouter Pro thermal warning — third report', NOW() - INTERVAL '3 days', NOW() - INTERVAL '2 days');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
@@ -91,7 +91,7 @@ INSERT INTO attachments (vcon_id, attachment_index, type, encoding, body) VALUES
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000004-0000-0000-0000-000000000004', 'b0000004-0000-0000-0000-000000000004', '0.3.0',
+('a0000004-0000-0000-0000-000000000004', 'a0000004-0000-0000-0000-000000000004', '0.3.0',
  'SmartRouter Pro overheating — same as Lagos reports', NOW() - INTERVAL '2 days', NOW() - INTERVAL '1 day');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
@@ -116,7 +116,7 @@ INSERT INTO attachments (vcon_id, attachment_index, type, encoding, body) VALUES
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000005-0000-0000-0000-000000000005', 'b0000005-0000-0000-0000-000000000005', '0.3.0',
+('a0000005-0000-0000-0000-000000000005', 'a0000005-0000-0000-0000-000000000005', '0.3.0',
  'SmartRouter Pro heat issue after update', NOW() - INTERVAL '1 day', NOW() - INTERVAL '6 hours');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
@@ -141,7 +141,7 @@ INSERT INTO attachments (vcon_id, attachment_index, type, encoding, body) VALUES
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000006-0000-0000-0000-000000000006', 'b0000006-0000-0000-0000-000000000006', '0.3.0',
+('a0000006-0000-0000-0000-000000000006', 'a0000006-0000-0000-0000-000000000006', '0.3.0',
  'Incorrect charge on monthly invoice', NOW() - INTERVAL '5 days', NOW() - INTERVAL '5 days' + INTERVAL '2 hours');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
@@ -166,7 +166,7 @@ INSERT INTO attachments (vcon_id, attachment_index, type, encoding, body) VALUES
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000007-0000-0000-0000-000000000007', 'b0000007-0000-0000-0000-000000000007', '0.3.0',
+('a0000007-0000-0000-0000-000000000007', 'a0000007-0000-0000-0000-000000000007', '0.3.0',
  'Billing discrepancy on enterprise plan', NOW() - INTERVAL '4 days', NOW() - INTERVAL '4 days' + INTERVAL '3 hours');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
@@ -191,7 +191,7 @@ INSERT INTO attachments (vcon_id, attachment_index, type, encoding, body) VALUES
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000008-0000-0000-0000-000000000008', 'b0000008-0000-0000-0000-000000000008', '0.3.0',
+('a0000008-0000-0000-0000-000000000008', 'a0000008-0000-0000-0000-000000000008', '0.3.0',
  'Unexpected pro-rata charges on upgrade', NOW() - INTERVAL '6 days', NOW() - INTERVAL '6 days' + INTERVAL '1 hour');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
@@ -215,7 +215,7 @@ INSERT INTO attachments (vcon_id, attachment_index, type, encoding, body) VALUES
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000009-0000-0000-0000-000000000009', 'b0000009-0000-0000-0000-000000000009', '0.3.0',
+('a0000009-0000-0000-0000-000000000009', 'a0000009-0000-0000-0000-000000000009', '0.3.0',
  'Double billing on Lagos corporate account', NOW() - INTERVAL '5 days', NOW() - INTERVAL '3 days');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
@@ -242,7 +242,7 @@ INSERT INTO attachments (vcon_id, attachment_index, type, encoding, body) VALUES
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000010-0000-0000-0000-000000000010', 'b0000010-0000-0000-0000-000000000010', '0.3.0',
+('a0000010-0000-0000-0000-000000000010', 'a0000010-0000-0000-0000-000000000010', '0.3.0',
  'Incorrect VAT calculation on invoice', NOW() - INTERVAL '4 days', NOW() - INTERVAL '2 days');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
@@ -267,7 +267,7 @@ INSERT INTO attachments (vcon_id, attachment_index, type, encoding, body) VALUES
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000011-0000-0000-0000-000000000011', 'b0000011-0000-0000-0000-000000000011', '0.3.0',
+('a0000011-0000-0000-0000-000000000011', 'a0000011-0000-0000-0000-000000000011', '0.3.0',
  'Complete service outage for enterprise client', NOW() - INTERVAL '3 days', NOW() - INTERVAL '2 days');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
@@ -296,7 +296,7 @@ INSERT INTO attachments (vcon_id, attachment_index, type, encoding, body) VALUES
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000012-0000-0000-0000-000000000012', 'b0000012-0000-0000-0000-000000000012', '0.3.0',
+('a0000012-0000-0000-0000-000000000012', 'a0000012-0000-0000-0000-000000000012', '0.3.0',
  'API rate limiting affecting production app', NOW() - INTERVAL '2 days', NOW() - INTERVAL '1 day');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
@@ -321,7 +321,7 @@ INSERT INTO attachments (vcon_id, attachment_index, type, encoding, body) VALUES
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000013-0000-0000-0000-000000000013', 'b0000013-0000-0000-0000-000000000013', '0.3.0',
+('a0000013-0000-0000-0000-000000000013', 'a0000013-0000-0000-0000-000000000013', '0.3.0',
  'Feature request: webhook retry mechanism', NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
@@ -345,7 +345,7 @@ INSERT INTO attachments (vcon_id, attachment_index, type, encoding, body) VALUES
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000014-0000-0000-0000-000000000014', 'b0000014-0000-0000-0000-000000000014', '0.3.0',
+('a0000014-0000-0000-0000-000000000014', 'a0000014-0000-0000-0000-000000000014', '0.3.0',
  'SSL certificate renewal failure', NOW() - INTERVAL '1 day', NOW() - INTERVAL '3 hours');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
@@ -372,7 +372,7 @@ INSERT INTO attachments (vcon_id, attachment_index, type, encoding, body) VALUES
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000015-0000-0000-0000-000000000015', 'b0000015-0000-0000-0000-000000000015', '0.3.0',
+('a0000015-0000-0000-0000-000000000015', 'a0000015-0000-0000-0000-000000000015', '0.3.0',
  'Account access recovery after password reset failure', NOW() - INTERVAL '2 days', NOW() - INTERVAL '2 days' + INTERVAL '30 minutes');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
@@ -397,7 +397,7 @@ INSERT INTO attachments (vcon_id, attachment_index, type, encoding, body) VALUES
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000016-0000-0000-0000-000000000016', 'b0000016-0000-0000-0000-000000000016', '0.3.0',
+('a0000016-0000-0000-0000-000000000016', 'a0000016-0000-0000-0000-000000000016', '0.3.0',
  'Data export request for compliance audit', NOW() - INTERVAL '1 day', NOW() - INTERVAL '2 hours');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
@@ -423,7 +423,7 @@ INSERT INTO attachments (vcon_id, attachment_index, type, encoding, body) VALUES
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000017-0000-0000-0000-000000000017', 'b0000017-0000-0000-0000-000000000017', '0.3.0',
+('a0000017-0000-0000-0000-000000000017', 'a0000017-0000-0000-0000-000000000017', '0.3.0',
  'Network latency issues during peak hours', NOW() - INTERVAL '6 days', NOW() - INTERVAL '5 days');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
@@ -447,7 +447,7 @@ INSERT INTO attachments (vcon_id, attachment_index, type, encoding, body) VALUES
 -- ============================================================
 
 INSERT INTO vcons (id, uuid, vcon_version, subject, created_at, updated_at) VALUES
-('a0000018-0000-0000-0000-000000000018', 'b0000018-0000-0000-0000-000000000018', '0.3.0',
+('a0000018-0000-0000-0000-000000000018', 'a0000018-0000-0000-0000-000000000018', '0.3.0',
  'Integration with Salesforce CRM not syncing', NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day');
 
 INSERT INTO parties (vcon_id, party_index, name, mailto, tel, metadata) VALUES
